@@ -3,6 +3,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+
 import scala.io.StdIn
 
 object WebServer {
@@ -14,11 +15,11 @@ object WebServer {
     implicit val executionContext = system.dispatcher
 
     val route =
-      path("hello") {
         get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+          pathPrefix("quote" / RemainingPath) { id =>
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, s"<h1>${id}</h1>"))
+          }
         }
-      }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 
